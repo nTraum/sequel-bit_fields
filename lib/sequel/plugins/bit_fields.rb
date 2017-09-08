@@ -79,7 +79,7 @@ module Sequel::Plugins
             if args.empty?
               self[bit_field_column] = 0
             #argument is an integer
-            elsif args.first.is_a?(Fixnum)
+            elsif args.first.is_a?(Integer)
               self[bit_field_column] = args.first
             else
               #set each bit_field presented in args to true, others to false
