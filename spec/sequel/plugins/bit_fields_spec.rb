@@ -61,7 +61,7 @@ describe Sequel::Plugins::BitFields do
   end
 
   it "works with the constructor" do
-    SpecModel.new(:started => true).started?.should be_true
+    SpecModel.new(:started => true).started?.should eq(true)
   end
 
   describe :bit_fields do
@@ -194,9 +194,9 @@ describe Sequel::Plugins::BitFields do
       end
 
       it "returns false for all status_bits" do
-        @model.started?.should be_false
-        @model.finished?.should be_false
-        @model.reviewed?.should be_false
+        @model.started?.should eq(false)
+        @model.finished?.should eq(false)
+        @model.reviewed?.should eq(false)
       end
     end
 
@@ -207,12 +207,12 @@ describe Sequel::Plugins::BitFields do
       end
 
       it "returns true for started?" do
-        @model.started?.should be_true
+        @model.started?.should eq(true)
       end
 
       it "returns false for started? if started was set to false" do
         @model.started = false
-        @model.started?.should be_false
+        @model.started?.should eq(false)
       end
     end
   end
@@ -234,7 +234,7 @@ describe Sequel::Plugins::BitFields do
 
     context "bit did not change" do
       it "returns false" do
-        @model.bit_changed?(:finished).should be_false
+        @model.bit_changed?(:finished).should eq(false)
       end
     end
 
@@ -245,7 +245,7 @@ describe Sequel::Plugins::BitFields do
 
       context "before save" do
         it "returns true" do
-          @model.bit_changed?(:finished).should be_true
+          @model.bit_changed?(:finished).should eq(true)
         end
       end
 
@@ -255,7 +255,7 @@ describe Sequel::Plugins::BitFields do
         end
 
         it "returns false" do
-          @model.bit_changed?(:finished).should be_false
+          @model.bit_changed?(:finished).should eq(false)
         end
       end
     end
@@ -337,7 +337,7 @@ describe Sequel::Plugins::BitFields do
 
       it "returns false for finished? if status_bits was set to 0" do
         @model.status_bits = 0
-        @model.finished?.should be_false
+        @model.finished?.should eq(false)
       end
     end
   end
@@ -350,12 +350,12 @@ describe Sequel::Plugins::BitFields do
       end
 
       it "returns true for author?" do
-        @model.author?.should be_true
+        @model.author?.should eq(true)
       end
 
       it "returns false for reader? and contributor?" do
-        @model.reader?.should be_false
-        @model.contributor?.should be_false
+        @model.reader?.should eq(false)
+        @model.contributor?.should eq(false)
       end
     end
 
@@ -366,15 +366,15 @@ describe Sequel::Plugins::BitFields do
       end
 
       it "returns true for reader? and contributor? and returns false for author?" do
-        @model.reader?.should be_true
-        @model.contributor?.should be_true
-        @model.author?.should be_false
+        @model.reader?.should eq(true)
+        @model.contributor?.should eq(true)
+        @model.author?.should eq(false)
       end
 
       it "returns false for reader? and contributor? if roles set to :author" do
         @model.roles = :author
-        @model.reader?.should be_false
-        @model.contributor?.should be_false
+        @model.reader?.should eq(false)
+        @model.contributor?.should eq(false)
       end
 
       context "an object with roles set to 6" do
@@ -384,23 +384,23 @@ describe Sequel::Plugins::BitFields do
         end
 
         it "returns true for reader? and contributor? and returns false for author?" do
-          @model.reader?.should be_true
-          @model.contributor?.should be_true
-          @model.author?.should be_false
+          @model.reader?.should eq(true)
+          @model.contributor?.should eq(true)
+          @model.author?.should eq(false)
         end
 
         it "returns false for author? reader? and contributor? if roles set to 0" do
           @model.roles = 0
-          @model.reader?.should be_false
-          @model.contributor?.should be_false
-          @model.author?.should be_false
+          @model.reader?.should eq(false)
+          @model.contributor?.should eq(false)
+          @model.author?.should eq(false)
         end
 
         it "returns true for author? and false for reader? and contributor? if roles set to 1" do
           @model.roles = 1
-          @model.reader?.should be_false
-          @model.contributor?.should be_false
-          @model.author?.should be_true
+          @model.reader?.should eq(false)
+          @model.contributor?.should eq(false)
+          @model.author?.should eq(true)
         end
       end
 
@@ -411,14 +411,14 @@ describe Sequel::Plugins::BitFields do
         end
 
         it "returns false for author? reader? and contributor?" do
-          @model.reader?.should be_false
-          @model.contributor?.should be_false
-          @model.author?.should be_false
+          @model.reader?.should eq(false)
+          @model.contributor?.should eq(false)
+          @model.author?.should eq(false)
         end
 
         it "returns true for author? if roles set to [:author]" do
           @model.roles = [:author]
-          @model.author?.should be_true
+          @model.author?.should eq(true)
         end
       end
     end
