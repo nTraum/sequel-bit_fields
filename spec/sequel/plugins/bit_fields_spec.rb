@@ -41,53 +41,50 @@ paranoid_bits_result = [{
 describe Sequel::Plugins::BitFields do
   describe :bit_fields_for_models do
     it 'returns all defined bit fields for all models' do
-      Sequel::Plugins::BitFields.bit_fields_for_models.keys.sort.should =~ ['AnotherSpecModel', 'SpecModel', 'SpecRolesModel', 'DirtyModel']
+      expect(Sequel::Plugins::BitFields.bit_fields_for_models.keys.sort).to match_array(['AnotherSpecModel', 'SpecModel', 'SpecRolesModel', 'DirtyModel'])
     end
   end
 
   it "declares the method started= and started?" do
-    SpecModel.create.should respond_to(:started=)
-    SpecModel.create.should respond_to(:started?)
+    expect(SpecModel.create).to respond_to(:started=)
+    expect(SpecModel.create).to respond_to(:started?)
   end
 
   it "declares the method finished= and finished?" do
-    SpecModel.create.should respond_to(:finished=)
-    SpecModel.create.should respond_to(:finished?)
+    expect(SpecModel.create).to respond_to(:finished=)
+    expect(SpecModel.create).to respond_to(:finished?)
   end
 
   it "declares the method reviewed= and reviewed?" do
-    SpecModel.create.should respond_to(:reviewed=)
-    SpecModel.create.should respond_to(:reviewed?)
+    expect(SpecModel.create).to respond_to(:reviewed=)
+    expect(SpecModel.create).to respond_to(:reviewed?)
   end
 
   it "works with the constructor" do
-    SpecModel.new(:started => true).started?.should be_true
+    expect(SpecModel.new(:started => true).started?).to eq(true)
   end
 
   describe :bit_fields do
     it "stores the bit fields" do
-      SpecModel.bit_fields[:status_bits].should   == status_bits_result
-      SpecModel.bit_fields(:status_bits).should   == status_bits_result
-      SpecModel.bit_fields[:paranoid_bits].should == paranoid_bits_result
-      SpecModel.bit_fields(:paranoid_bits).should == paranoid_bits_result
+      expect(SpecModel.bit_fields[:status_bits]).to eq(status_bits_result)
+      expect(SpecModel.bit_fields(:status_bits)).to eq(status_bits_result)
+      expect(SpecModel.bit_fields[:paranoid_bits]).to eq(paranoid_bits_result)
+      expect(SpecModel.bit_fields(:paranoid_bits)).to eq(paranoid_bits_result)
     end
 
     it "returns all bit_fields of the models" do
-      SpecModel.bit_fields.should == {
-        :status_bits   => status_bits_result,
-        :paranoid_bits => paranoid_bits_result
-      }
+      expect(SpecModel.bit_fields).to eq(status_bits: status_bits_result, paranoid_bits: paranoid_bits_result)
     end
 
     it "returns some_bits of the AnotherSpecModel" do
-      AnotherSpecModel.bit_fields.should == {
-        :some_bits        => [{ :name => :some_fnord, :description => "Description for 'some_fnord' not available." }],
-        :some_other_bits  => [{ :name => :some_other_bits_fnord, :description => "Description for 'some_other_bits_fnord' not available." }]
-      }
+      expect(AnotherSpecModel.bit_fields).to eq({
+        some_bits: [{ name: :some_fnord, description: "Description for 'some_fnord' not available." }],
+        some_other_bits: [{ name: :some_other_bits_fnord, description: "Description for 'some_other_bits_fnord' not available." }]
+      })
     end
 
     it "raises if bit_fields is called for a model which doesn't use the plugin" do
-      expect { NoBitFieldsSpecModel.bit_fields }.to raise_error
+      expect { NoBitFieldsSpecModel.bit_fields }.to raise_error(NoMethodError)
     end
   end
 
@@ -98,75 +95,75 @@ describe Sequel::Plugins::BitFields do
       end
 
       it "sets status_bits to 0" do
-        @model.status_bits.should == 0
+        expect(@model.status_bits).to eq(0)
       end
 
       it "sets status_bits to 0 if started is set to false" do
         @model.update(:started => false)
-        @model.reload.status_bits.should == 0
+        expect(@model.reload.status_bits).to eq(0)
       end
 
       it "sets status_bits to 1 if started is set to true" do
         @model.started = true
-        @model.status_bits.should == 1
+        expect(@model.status_bits).to eq(1)
       end
 
       it "evaluates 0 as false" do
         @model.started = 0
-        @model.status_bits.should == 0
+        expect(@model.status_bits).to eq(0)
       end
 
       it "evaluates 1 as true" do
         @model.started = 1
-        @model.status_bits.should == 1
+        expect(@model.status_bits).to eq(1)
       end
 
       it "evaluates '0' as false" do
         @model.started = '0'
-        @model.status_bits.should == 0
+        expect(@model.status_bits).to eq(0)
       end
 
       it "evaluates '1' as true" do
         @model.started = '1'
-        @model.status_bits.should == 1
+        expect(@model.status_bits).to eq(1)
       end
 
       it "evaluates 'false' as false" do
         @model.started = 'false'
-        @model.status_bits.should == 0
+        expect(@model.status_bits).to eq(0)
       end
 
       it "evaluates 'true' as true" do
         @model.started = 'true'
-        @model.status_bits.should == 1
+        expect(@model.status_bits).to eq(1)
       end
 
       it "sets status_bits to 2 if finished is set to true" do
         @model.finished = true
-        @model.status_bits.should == 2
+        expect(@model.status_bits).to eq(2)
       end
 
       it "sets status_bits to 0 if finished is set to false" do
         @model.finished = false
-        @model.status_bits.should == 0
+        expect(@model.status_bits).to eq(0)
       end
 
       it "sets status_bits to 4 if reviewed is set to true" do
         @model.reviewed = true
-        @model.status_bits.should == 4
+        expect(@model.status_bits).to eq(4)
       end
 
       it "sets status_bits to 3 if started and finished is set to true" do
         @model.started = true
         @model.finished = true
-        @model.status_bits.should == 3
+        expect(@model.status_bits).to eq(3)
       end
 
       it "sets status bits to 7 if started and finished and reviewed is set to true" do
         @model.started = true
         @model.finished = true
         @model.reviewed = true
-        @model.status_bits.should == 7
+        expect(@model.status_bits).to eq(7)
       end
     end
 
@@ -177,12 +174,12 @@ describe Sequel::Plugins::BitFields do
       end
 
       it "sets the status bits to 2" do
-        @model.status_bits.should == 2
+        expect(@model.status_bits).to eq(2)
       end
 
       it "sets the status_bits to 0 if finished was set to false" do
         @model.finished = false
-        @model.status_bits.should == 0
+        expect(@model.status_bits).to eq(0)
       end
     end
   end
@@ -194,9 +191,9 @@ describe Sequel::Plugins::BitFields do
       end
 
       it "returns false for all status_bits" do
-        @model.started?.should be_false
-        @model.finished?.should be_false
-        @model.reviewed?.should be_false
+        expect(@model.started?).to eq(false)
+        expect(@model.finished?).to eq(false)
+        expect(@model.reviewed?).to eq(false)
       end
     end
 
@@ -207,12 +204,12 @@ describe Sequel::Plugins::BitFields do
       end
 
       it "returns true for started?" do
-        @model.started?.should be_true
+        expect(@model.started?).to eq(true)
       end
 
       it "returns false for started? if started was set to false" do
         @model.started = false
-        @model.started?.should be_false
+        expect(@model.started?).to eq(false)
       end
     end
   end
@@ -234,7 +231,7 @@ describe Sequel::Plugins::BitFields do
 
     context "bit did not change" do
       it "returns false" do
-        @model.bit_changed?(:finished).should be_false
+        expect(@model.bit_changed?(:finished)).to eq(false)
       end
     end
 
@@ -245,7 +242,7 @@ describe Sequel::Plugins::BitFields do
 
       context "before save" do
         it "returns true" do
-          @model.bit_changed?(:finished).should be_true
+          expect(@model.bit_changed?(:finished)).to eq(true)
         end
       end
 
@@ -255,7 +252,7 @@ describe Sequel::Plugins::BitFields do
         end
 
         it "returns false" do
-          @model.bit_changed?(:finished).should be_false
+          expect(@model.bit_changed?(:finished)).to eq(false)
         end
       end
     end
@@ -263,68 +260,75 @@ describe Sequel::Plugins::BitFields do
 
   describe :field_sql do
     it "returns the sql for truthy comparison of started" do
-      SpecModel.started_sql.should == "`spec_models`.`status_bits` & 1 = 1"
+      expect(SpecModel.started_sql).to eq("`spec_models`.`status_bits` & 1 = 1")
     end
 
     it "returns the sql for falsy comparison of started" do
-      SpecModel.started_sql(false).should == "`spec_models`.`status_bits` & 1 != 1"
+      expect(SpecModel.started_sql(false)).to eq("`spec_models`.`status_bits` & 1 != 1")
     end
 
     it "returns the sql for truthy comparison of finished" do
-      SpecModel.finished_sql.should == "`spec_models`.`status_bits` & 2 = 2"
+      expect(SpecModel.finished_sql).to eq("`spec_models`.`status_bits` & 2 = 2")
     end
 
     it "returns the sql for falsy comparison of finished" do
-      SpecModel.finished_sql(false).should == "`spec_models`.`status_bits` & 2 != 2"
+      expect(SpecModel.finished_sql(false)).to eq("`spec_models`.`status_bits` & 2 != 2")
     end
 
     it "returns the sql for truthy comparison of reviewed" do
-      SpecModel.reviewed_sql.should == "`spec_models`.`status_bits` & 4 = 4"
+      expect(SpecModel.reviewed_sql).to eq("`spec_models`.`status_bits` & 4 = 4")
     end
 
     it "returns the sql for falsy comparison of reviewed" do
-      SpecModel.reviewed_sql(false).should == "`spec_models`.`status_bits` & 4 != 4"
+      expect(SpecModel.reviewed_sql(false)).to eq("`spec_models`.`status_bits` & 4 != 4")
     end
 
     it "uses the passed table name" do
-      SpecModel.reviewed_sql(false, :table => '_spec_models').should == "`_spec_models`.`status_bits` & 4 != 4"
+      expect(SpecModel.reviewed_sql(false, :table => '_spec_models')).to eq("`_spec_models`.`status_bits` & 4 != 4")
     end
   end
 
   describe :field_dataset do
     it "returns the dataset for truthy comparison of started" do
-      SpecModel.started.sql.should ==
+      expect(SpecModel.started.sql).to eq(
         "SELECT * FROM `spec_models` WHERE (`spec_models`.`status_bits` & 1 = 1)"
+      )
     end
 
     it "returns the dataset for falsy comparison of started" do
-      SpecModel.started(false).sql.should ==
+      expect(SpecModel.started(false).sql).to eq(
         "SELECT * FROM `spec_models` WHERE (`spec_models`.`status_bits` & 1 != 1)"
+      )
     end
 
     it "returns the dataset for truthy comparison of finished" do
-      SpecModel.finished.sql.should ==
+      expect(SpecModel.finished.sql).to eq(
         "SELECT * FROM `spec_models` WHERE (`spec_models`.`status_bits` & 2 = 2)"
+      )
     end
 
     it "returns the dataset for falsy comparison of finished" do
-      SpecModel.finished(false).sql.should ==
+      expect(SpecModel.finished(false).sql).to eq(
         "SELECT * FROM `spec_models` WHERE (`spec_models`.`status_bits` & 2 != 2)"
+      )
     end
 
     it "returns the dataset for truthy comparison of reviewed" do
-      SpecModel.reviewed.sql.should ==
+      expect(SpecModel.reviewed.sql).to eq(
         "SELECT * FROM `spec_models` WHERE (`spec_models`.`status_bits` & 4 = 4)"
+      )
     end
 
     it "returns the dataset for falsy comparison of reviewed" do
-      SpecModel.reviewed(false).sql.should ==
+      expect(SpecModel.reviewed(false).sql).to eq(
         "SELECT * FROM `spec_models` WHERE (`spec_models`.`status_bits` & 4 != 4)"
+      )
     end
 
     it "allows chaining of datasets" do
-      SpecModel.started.reviewed(false).sql.should ==
+      expect(SpecModel.started.reviewed(false).sql).to eq(
         "SELECT * FROM `spec_models` WHERE ((`spec_models`.`status_bits` & 1 = 1) AND (`spec_models`.`status_bits` & 4 != 4))"
+      )
     end
   end
 
@@ -337,7 +341,7 @@ describe Sequel::Plugins::BitFields do
 
       it "returns false for finished? if status_bits was set to 0" do
         @model.status_bits = 0
-        @model.finished?.should be_false
+        expect(@model.finished?).to eq(false)
       end
     end
   end
@@ -350,12 +354,12 @@ describe Sequel::Plugins::BitFields do
       end
 
       it "returns true for author?" do
-        @model.author?.should be_true
+        expect(@model.author?).to eq(true)
       end
 
       it "returns false for reader? and contributor?" do
-        @model.reader?.should be_false
-        @model.contributor?.should be_false
+        expect(@model.reader?).to eq(false)
+        expect(@model.contributor?).to eq(false)
       end
     end
 
@@ -366,15 +370,15 @@ describe Sequel::Plugins::BitFields do
       end
 
       it "returns true for reader? and contributor? and returns false for author?" do
-        @model.reader?.should be_true
-        @model.contributor?.should be_true
-        @model.author?.should be_false
+        expect(@model.reader?).to eq(true)
+        expect(@model.contributor?).to eq(true)
+        expect(@model.author?).to eq(false)
       end
 
       it "returns false for reader? and contributor? if roles set to :author" do
         @model.roles = :author
-        @model.reader?.should be_false
-        @model.contributor?.should be_false
+        expect(@model.reader?).to eq(false)
+        expect(@model.contributor?).to eq(false)
       end
 
       context "an object with roles set to 6" do
@@ -384,23 +388,23 @@ describe Sequel::Plugins::BitFields do
         end
 
         it "returns true for reader? and contributor? and returns false for author?" do
-          @model.reader?.should be_true
-          @model.contributor?.should be_true
-          @model.author?.should be_false
+          expect(@model.reader?).to eq(true)
+          expect(@model.contributor?).to eq(true)
+          expect(@model.author?).to eq(false)
         end
 
         it "returns false for author? reader? and contributor? if roles set to 0" do
           @model.roles = 0
-          @model.reader?.should be_false
-          @model.contributor?.should be_false
-          @model.author?.should be_false
+          expect(@model.reader?).to eq(false)
+          expect(@model.contributor?).to eq(false)
+          expect(@model.author?).to eq(false)
         end
 
         it "returns true for author? and false for reader? and contributor? if roles set to 1" do
           @model.roles = 1
-          @model.reader?.should be_false
-          @model.contributor?.should be_false
-          @model.author?.should be_true
+          expect(@model.reader?).to eq(false)
+          expect(@model.contributor?).to eq(false)
+          expect(@model.author?).to eq(true)
         end
       end
 
@@ -411,14 +415,14 @@ describe Sequel::Plugins::BitFields do
         end
 
         it "returns false for author? reader? and contributor?" do
-          @model.reader?.should be_false
-          @model.contributor?.should be_false
-          @model.author?.should be_false
+          expect(@model.reader?).to eq(false)
+          expect(@model.contributor?).to eq(false)
+          expect(@model.author?).to eq(false)
         end
 
         it "returns true for author? if roles set to [:author]" do
           @model.roles = [:author]
-          @model.author?.should be_true
+          expect(@model.author?).to eq(true)
         end
       end
     end
@@ -433,17 +437,17 @@ describe Sequel::Plugins::BitFields do
 
       it "returns a representing hash of values" do
         values = @model.bit_field_values_for(:status_bits)
-        values.should == { :finished => true, :started => false, :reviewed => false }
+        expect(values).to eq({ :finished => true, :started => false, :reviewed => false })
       end
 
       it "returns a hash with value equal to true value" do
         values = @model.bit_field_values_for(:status_bits, true)
-        values.should == {:finished => true}
+        expect(values).to eq({:finished => true})
       end
 
       it "returns a hash with value equal to false value" do
         values = @model.bit_field_values_for(:status_bits, false)
-        values.should == {:started => false, :reviewed => false}
+        expect(values).to eq({:started => false, :reviewed => false})
       end
     end
   end
@@ -451,7 +455,7 @@ describe Sequel::Plugins::BitFields do
   describe :bit_field_indexes_for do
     it "returns a hash with the name of the bit fields and its representing indexes" do
       hash = SpecModel.bit_field_indexes_for(:status_bits)
-      hash.should == { :started => 1, :finished => 2, :reviewed => 4 }
+      expect(hash).to eq({ :started => 1, :finished => 2, :reviewed => 4 })
     end
   end
 

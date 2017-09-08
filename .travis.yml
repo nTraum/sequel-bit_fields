@@ -1,6 +1,9 @@
+language: ruby
+cache: bundler
 rvm:
-  - 1.9.3
-branches:
-  only:
-    - master
-
+  - 2.2
+  - 2.3
+  - 2.4
+gemfile:
+  - gemfiles/sequel_5.gemfile
+  - gemfiles/sequel_4.gemfile
